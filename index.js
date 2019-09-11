@@ -163,9 +163,9 @@ var KempebValidator = {
                             }
                         }
                     }
-                    if (_callback) return _callback({status: 200, message: 'Success', data: 'empty'})
                     var res = Object.assign({}, _RESULT)
                     _RESULT = {}
+                    if (_callback) return _callback({status: 200, message: 'Success', data: (Object.keys(res)).length ? res : null})
                     return {status: 200, message: 'Success', data: (Object.keys(res)).length ? res : null}
                 } catch (errors) {
                     const {status, message} = errors
