@@ -27,7 +27,7 @@ var KempebValidator = {
              * GETTER & SETTER
              * @TODO learn about prototype bind,apply,call
              * @TODO make some research about prototype function
-             * @TODO make function is rules exist for check valid rules
+             * @TODO make function is rules exist for check valid rules (uneeded)
 
                 function SET_VALUE (type = '', value = '') {
                     try {
@@ -58,7 +58,7 @@ var KempebValidator = {
             /**
              * Validation Rules Function
              * @TODO make validation same as for comparison
-             * @TODO change required fungsi to check object or array
+             * @TODO change required fungsi to check object or array (partial)
              */
 
             function string() {
@@ -141,7 +141,7 @@ var KempebValidator = {
 
             /**
              * Validate Function for Return
-             * @TODO make recursive function to call validation function rules
+             * @TODO make recursive function to call validation function rules (done)
              */
 
             function validate(data_object, _callback) {
@@ -149,6 +149,7 @@ var KempebValidator = {
                     if (!data_object) throw {status: 400, message: 'empty'};
                     if (Array.isArray(data_object) || !(data_object instanceof Object)) throw {status: 400, message: 'should object'};
                     var key_iterator, _RULES, _CLEAN_RULES, _SPLITE_RULES, _ASSIGN_FUNCTION;
+                    _RESULT = {}
                     for (key_iterator in data_object) {
                         _RULES = _SCHEMA[key_iterator]
                         if (_RULES) {
@@ -163,10 +164,8 @@ var KempebValidator = {
                             }
                         }
                     }
-                    var res = Object.assign({}, _RESULT)
-                    _RESULT = {}
-                    if (_callback) return _callback({status: 200, message: 'Success', data: (Object.keys(res)).length ? res : null})
-                    return {status: 200, message: 'Success', data: (Object.keys(res)).length ? res : null}
+                    if (_callback) return _callback({status: 200, message: 'Success', data: (Object.keys(_RESULT)).length ? _RESULT : null})
+                    return {status: 200, message: 'Success', data: (Object.keys(_RESULT)).length ? _RESULT : null}
                 } catch (errors) {
                     const {status, message} = errors
                     return {status: status || 500, message: message || 'error'}
@@ -177,7 +176,7 @@ var KempebValidator = {
              * [pemanggilan fungsi validasi secara rekursif]
              *
              * @param   {[Array]}  _ARRAY_OF_RULES  [list array rules yang dilempar secara rekursif]
-             * @TODO bind _THIS to validation function list
+             * @TODO bind _THIS to validation function list (temporary)
              * @return  {[String]}                   [memberikan return berbentuk string]
              */
             function _call_validation(_ARRAY_OF_RULES) {
