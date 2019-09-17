@@ -1,3 +1,15 @@
+/*
+    {
+        value: value,
+        field: field,
+        rules: {
+            required: {
+                message: message
+            },
+            ...
+        }
+    }
+*/
 var KempebValidator = {
     schema(skema) {
         try {
@@ -10,7 +22,7 @@ var KempebValidator = {
              * @TODO link for helping development https://codeburst.io/javascript-the-keyword-this-for-beginners-fb5238d99f85
              */
 
-            var _SCHEMA, _VALUE, _RULES_PARAMETER, _THIS, _SAMEAS_VALUE = {}, _RESULT = {}
+            var _SCHEMA, _VALUE, _RULES_PARAMETER, _THIS, _SAMEAS_VALUE = {}, _RESULT = {}, _CUSTOM_MESSAGE = ''
 
             _THIS = {
                 'required': required,
@@ -62,17 +74,17 @@ var KempebValidator = {
              */
 
             function string() {
-                if (!_VALUE) throw 'empty value'
+                if (!_VALUE) throw {status: 400, message:'data empty'}
                 if (typeof(_VALUE) !== 'string') {
-                    return 'data harus berformat string'
+                    return _CUSTOM_MESSAGE || 'data harus berformat string'
                 }
             }
 
             function number() {
-                if (!_VALUE) throw 'empty value'
+                if (!_VALUE) throw {status: 400, message:'data empty'}
                 if (!parseFloat(_VALUE)) throw 'not numeric string'
                 if (typeof(_VALUE) !== 'number') {
-                    return 'data harus berformat numeric'
+                    return _CUSTOM_MESSAGE || 'data harus berformat numeric'
                 }
             }
 
@@ -81,53 +93,53 @@ var KempebValidator = {
             function required() {
                 if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
                     if (!(Object.keys(_VALUE)).length) {
-                        return 'data object harus memiliki satu key'
+                        return _CUSTOM_MESSAGE || 'data object harus memiliki satu key'
                     }
                 }
                 if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
                     if (!_VALUE.length) {
-                        return 'data array harus memiliki satu key'
+                        return _CUSTOM_MESSAGE || 'data array harus memiliki satu key'
                     }
                 }
                 if (!_VALUE) {
-                    return 'data harus di isi'
+                    return _CUSTOM_MESSAGE || 'data harus di isi'
                 }
             }
 
             function min() {
-                if (!_VALUE) throw 'data empty'
+                if (!_VALUE) throw {status: 400, message:'data empty'}
                 var length = _VALUE.length
                 if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
                     if ((Object.keys(_VALUE)).length < _RULES_PARAMETER) {
-                        return 'data minimal object adalah ' + _RULES_PARAMETER
+                        return _CUSTOM_MESSAGE || 'data minimal object adalah ' + _RULES_PARAMETER
                     }
                 }
                 if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
                     if (_VALUE.length < _RULES_PARAMETER) {
-                        return 'data minimal array adalah ' + _RULES_PARAMETER
+                        return _CUSTOM_MESSAGE || 'data minimal array adalah ' + _RULES_PARAMETER
                     }
                 }
                 console.log(length, _RULES_PARAMETER)
                 if (length < _RULES_PARAMETER) {
-                    return 'data minimal karakter adalah ' + _RULES_PARAMETER
+                    return _CUSTOM_MESSAGE || 'data minimal karakter adalah ' + _RULES_PARAMETER
                 }
             }
 
             function max() {
-                if (!_VALUE) throw 'data empty'
+                if (!_VALUE) throw {status: 400, message:'data empty'}
                 var length = _VALUE.length
                 if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
                     if ((Object.keys(_VALUE)).length <= _RULES_PARAMETER) {
-                        return 'data maksimal object adalah ' + _RULES_PARAMETER
+                        return _CUSTOM_MESSAGE || 'data maksimal object adalah ' + _RULES_PARAMETER
                     }
                 }
                 if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
                     if (_VALUE.length <= _RULES_PARAMETER) {
-                        return 'data maksimal array adalah ' + _RULES_PARAMETER
+                        return _CUSTOM_MESSAGE || 'data maksimal array adalah ' + _RULES_PARAMETER
                     }
                 }
                 if (length <= _RULES_PARAMETER) {
-                    return 'data maksimal karakter adalah ' + _RULES_PARAMETER
+                    return _CUSTOM_MESSAGE || 'data maksimal karakter adalah ' + _RULES_PARAMETER
                 }
             }
 
@@ -157,7 +169,12 @@ var KempebValidator = {
                             if (_CLEAN_RULES[(_CLEAN_RULES.length - 1)] === '|') _CLEAN_RULES = _CLEAN_RULES.slice(0, (_CLEAN_RULES.length - 1))
                             _SPLITE_RULES = _CLEAN_RULES.split('|')
                             _VALUE = data_object[key_iterator]
+                            if (_VALUE instanceof Object) {
+                                if (_VALUE.hasOwnProperty('field')) _CUSTOM_MESSAGE = _VALUE.field
+                                else _CUSTOM_MESSAGE = key_iterator
+                            }
                             _ASSIGN_FUNCTION = _call_validation(_SPLITE_RULES)
+                            _CUSTOM_MESSAGE = ''
                             if (_ASSIGN_FUNCTION) {
                                 _RESULT[key_iterator] = _ASSIGN_FUNCTION
                                 continue
@@ -190,6 +207,17 @@ var KempebValidator = {
                         _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
                     }
                     if (!_FUNCTION) throw 'undefined function'
+                    /**
+                     * [determine for custom message]
+                     */
+                    if (_VALUE instanceof Object) {
+                        if (_VALUE.hasOwnProperty('rules') && _VALUE.rules.hasOwnProperty(_ARRAY_OF_RULES[0])) {
+                            var _MESSAGE = _VALUE.rules[_ARRAY_OF_RULES[0]]
+                            var _FIELD = _CUSTOM_MESSAGE.slice()
+                            _CUSTOM_MESSAGE = _MESSAGE.replace(/{{field}}/g, _FIELD)
+                        } else _CUSTOM_MESSAGE = ''
+                        _VALUE = _VALUE.value
+                    }
                     console.log(_ARRAY_OF_RULES)
                     _FUNCTION = _FUNCTION()
                     console.log(_FUNCTION, _VALUE, _SCHEMA)
@@ -207,7 +235,9 @@ var KempebValidator = {
 
         } catch (errors) {
             const { status, message } = errors
-            return {status: status || 500, message: message || 'error'}
+            var error_message = {status: status || 500, message: message || 'error'}
+            console.error(error_message)
+            return error_message
         }
     }
 }
