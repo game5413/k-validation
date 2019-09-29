@@ -30,6 +30,8 @@ var KempebValidator = {
                 'number': number,
                 'min': min,
                 'max': max,
+                'regex': regex,
+                'email': email,
                 '_VALUE': _VALUE,
                 '_RULES_PARAMETER': _RULES_PARAMETER,
                 '_SAMEAS_VALUE': _SAMEAS_VALUE
@@ -119,7 +121,7 @@ var KempebValidator = {
                         return _CUSTOM_MESSAGE || 'data minimal array adalah ' + _RULES_PARAMETER
                     }
                 }
-                console.log(length, _RULES_PARAMETER)
+                // console.log(length, _RULES_PARAMETER)
                 if (length < _RULES_PARAMETER) {
                     return _CUSTOM_MESSAGE || 'data minimal karakter adalah ' + _RULES_PARAMETER
                 }
@@ -143,13 +145,21 @@ var KempebValidator = {
                 }
             }
 
-            function phone() {}
-
-            function email() {
-                var regex = new RegExp(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g)
+            function phone() {
+                _RULES_PARAMETER = /^0[1-9]\d+/g
+                return regex()
             }
 
-            function regex() {}
+            function email() {
+                _RULES_PARAMETER = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g
+                return regex()
+            }
+
+            function regex() {
+                if (!_VALUE || !_RULES_PARAMETER) throw {status: 400, message: 'value or RegExp rules undefined'}
+                var regex = new RegExp(_RULES_PARAMETER)
+                if (!regex.test(_VALUE)) return 'format data tidak sesuai'
+            }
 
             /**
              * Validate Function for Return
@@ -165,7 +175,8 @@ var KempebValidator = {
                     for (key_iterator in data_object) {
                         _RULES = _SCHEMA[key_iterator]
                         if (_RULES) {
-                            _CLEAN_RULES = _RULES.replace(/(\|{2}|[^a-zA-Z0-9|-])/gm, '')
+                            // _CLEAN_RULES = _RULES.replace(/(\|{2}|[^a-zA-Z0-9|-])/gm, '')
+                            _CLEAN_RULES = _RULES.replace(/(^\||\|{2}|\s|\|$)/gm, '')
                             if (_CLEAN_RULES[(_CLEAN_RULES.length - 1)] === '|') _CLEAN_RULES = _CLEAN_RULES.slice(0, (_CLEAN_RULES.length - 1))
                             _SPLITE_RULES = _CLEAN_RULES.split('|')
                             _VALUE = data_object[key_iterator]
@@ -206,7 +217,7 @@ var KempebValidator = {
                     } else {
                         _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
                     }
-                    if (!_FUNCTION) throw 'undefined function'
+                    if (!_FUNCTION) throw {status: 500, message: 'undefined function'}
                     /**
                      * [determine for custom message]
                      */
@@ -218,9 +229,9 @@ var KempebValidator = {
                         } else _CUSTOM_MESSAGE = ''
                         _VALUE = _VALUE.value
                     }
-                    console.log(_ARRAY_OF_RULES)
+                    // console.log(_ARRAY_OF_RULES)
                     _FUNCTION = _FUNCTION()
-                    console.log(_FUNCTION, _VALUE, _SCHEMA)
+                    // console.log(_FUNCTION, _VALUE, _SCHEMA)
                     if (!_FUNCTION) {
                         _ARRAY_OF_RULES.splice(0, 1)
                         return _call_validation(_ARRAY_OF_RULES)

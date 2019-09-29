@@ -35,8 +35,8 @@ KValidation.schema(rules).validate(value, function(result) {
 - string
 - min-{value} `// min-6`
 - max-{value} `// max-12`
-- phone (coming soon)
-- email (coming soon)
+- phone
+- email
 - RegExp (coming soon)
 - sameAs (coming soon)
 
