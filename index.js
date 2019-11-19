@@ -94,12 +94,12 @@ var KempebValidator = {
             function sameas() {}
 
             function required() {
-                if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
-                    if (!(Object.keys(_VALUE)).length) {
+                if (!Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
+                    if (!Object.keys(_VALUE).length) {
                         return _CUSTOM_MESSAGE || 'data object harus memiliki satu key'
                     }
                 }
-                if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
+                if (Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
                     if (!_VALUE.length) {
                         return _CUSTOM_MESSAGE || 'data array harus memiliki satu key'
                     }
@@ -111,13 +111,20 @@ var KempebValidator = {
 
             function min() {
                 if (!_VALUE) throw {status: 400, message:'data empty'}
-                var length = _VALUE.length
-                if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
-                    if ((Object.keys(_VALUE)).length < _RULES_PARAMETER) {
+                var length
+                if (typeof _VALUE === 'string') {
+                    length = _VALUE.length
+                } else if (!Number.isNaN(Number(_VALUE))) {
+                    length = _VALUE
+                } else {
+                    length = _VALUE
+                }
+                if (!Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
+                    if (Object.keys(_VALUE).length < _RULES_PARAMETER) {
                         return _CUSTOM_MESSAGE || 'data minimal object adalah ' + _RULES_PARAMETER
                     }
                 }
-                if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
+                if (Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
                     if (_VALUE.length < _RULES_PARAMETER) {
                         return _CUSTOM_MESSAGE || 'data minimal array adalah ' + _RULES_PARAMETER
                     }
@@ -130,18 +137,25 @@ var KempebValidator = {
 
             function max() {
                 if (!_VALUE) throw {status: 400, message:'data empty'}
-                var length = _VALUE.length
-                if (!(Array.isArray(_VALUE)) && (_VALUE instanceof Object)) {
-                    if ((Object.keys(_VALUE)).length <= _RULES_PARAMETER) {
+                var length
+                if (typeof _VALUE === 'string') {
+                    length = _VALUE.length
+                } else if (!Number.isNaN(Number(_VALUE))) {
+                    length = _VALUE
+                } else {
+                    length = _VALUE
+                }
+                if (!Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
+                    if (Object.keys(_VALUE).length > _RULES_PARAMETER) {
                         return _CUSTOM_MESSAGE || 'data maksimal object adalah ' + _RULES_PARAMETER
                     }
                 }
-                if (Array.isArray(_VALUE) && (_VALUE instanceof Object)) {
-                    if (_VALUE.length <= _RULES_PARAMETER) {
+                if (Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
+                    if (_VALUE.length > _RULES_PARAMETER) {
                         return _CUSTOM_MESSAGE || 'data maksimal array adalah ' + _RULES_PARAMETER
                     }
                 }
-                if (length <= _RULES_PARAMETER) {
+                if (length > _RULES_PARAMETER) {
                     return _CUSTOM_MESSAGE || 'data maksimal karakter adalah ' + _RULES_PARAMETER
                 }
             }
@@ -178,7 +192,7 @@ var KempebValidator = {
                         if (_RULES) {
                             // _CLEAN_RULES = _RULES.replace(/(\|{2}|[^a-zA-Z0-9|-])/gm, '')
                             _CLEAN_RULES = _RULES.replace(/(^\||\|{2}|\s|\|$)/gm, '')
-                            if (_CLEAN_RULES[(_CLEAN_RULES.length - 1)] === '|') _CLEAN_RULES = _CLEAN_RULES.slice(0, (_CLEAN_RULES.length - 1))
+                            if (_CLEAN_RULES[_CLEAN_RULES.length - 1] === '|') _CLEAN_RULES = _CLEAN_RULES.slice(0, _CLEAN_RULES.length - 1)
                             _SPLITE_RULES = _CLEAN_RULES.split('|')
                             _VALUE = data_object[key_iterator]
                             if (_VALUE instanceof Object) {
