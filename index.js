@@ -31,6 +31,7 @@ var KempebValidator = {
                 'min': min,
                 'max': max,
                 'regex': regex,
+                'phone': phone,
                 'email': email,
                 '_VALUE': _VALUE,
                 '_RULES_PARAMETER': _RULES_PARAMETER,
@@ -214,6 +215,8 @@ var KempebValidator = {
                     if (_ARRAY_OF_RULES[0].search('-') > 0) {
                         _FUNCTION = _THIS[_ARRAY_OF_RULES[0].slice(0, _ARRAY_OF_RULES[0].search('-'))]
                         _RULES_PARAMETER = _ARRAY_OF_RULES[0].slice((_ARRAY_OF_RULES[0].search('-') + 1), _ARRAY_OF_RULES[0].length)
+                    } else if (_ARRAY_OF_RULES[0][0] === '(' && _ARRAY_OF_RULES[0][_ARRAY_OF_RULES[0].length - 1] === ')') {
+                        _FUNCTION = _THIS['regex']
                     } else {
                         _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
                     }
