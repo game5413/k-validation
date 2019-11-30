@@ -174,7 +174,10 @@
     
                 function regex() {
                     if (!_VALUE || !_RULES_PARAMETER) throw {status: 400, message: 'value or RegExp rules undefined'}
-                    var regex = new RegExp(_RULES_PARAMETER)
+                    var _CLEAN_REGEX = _RULES_PARAMETER.slice(1, _RULES_PARAMETER.length - 1)
+                    var match = _CLEAN_REGEX.match(new RegExp('^/(.*?)/([gimuy]*)$'));
+                    var regex = new RegExp(match[1], match[2]);
+                    regex = new RegExp(regex)
                     if (!regex.test(_VALUE)) return 'format data tidak sesuai'
                 }
     
@@ -231,8 +234,6 @@
                         if (_ARRAY_OF_RULES[0].search('-') > 0) {
                             _FUNCTION = _THIS[_ARRAY_OF_RULES[0].slice(0, _ARRAY_OF_RULES[0].search('-'))]
                             _RULES_PARAMETER = _ARRAY_OF_RULES[0].slice((_ARRAY_OF_RULES[0].search('-') + 1), _ARRAY_OF_RULES[0].length)
-                        } else if (_ARRAY_OF_RULES[0][0] === '(' && _ARRAY_OF_RULES[0][_ARRAY_OF_RULES[0].length - 1] === ')') {
-                            _FUNCTION = _THIS['regex']
                         } else {
                             _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
                         }
@@ -266,7 +267,7 @@
             } catch (errors) {
                 const { status, message } = errors
                 var error_message = {status: status || 500, message: message || 'error'}
-                console.error(error_message)
+                console.log(error_message)
                 return error_message
             }
         }

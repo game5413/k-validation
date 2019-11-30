@@ -32,13 +32,17 @@ KValidation.schema(rules).validate(value, function(result) {
 - string
 - number
 - required
-- string
 - min-{value} `// min-6`
 - max-{value} `// max-12`
 - phone
 - email
-- RegExp (coming soon)
+- RegExp `// regex-(/[^0-9]/g)` **see notes for detail**
 - sameAs (coming soon)
+
+### Notes
+- for using regex rules, you must escape some special characters because rules writed as string
+for example `regex-(/\d/g)` will return `regex-(/d/g)` if you not escape the special characters, so you had changes like
+this `regex(/\\d/g)` and it will return `regex-(/\d/g)`
 
 ### Validation values can be passed with two variant
 ```
