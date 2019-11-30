@@ -35,6 +35,7 @@
                     'regex': regex,
                     'phone': phone,
                     'email': email,
+                    'sameas': sameas,
                     '_VALUE': _VALUE,
                     '_RULES_PARAMETER': _RULES_PARAMETER,
                     '_SAMEAS_VALUE': _SAMEAS_VALUE
@@ -93,7 +94,11 @@
                     }
                 }
     
-                function sameas() {}
+                function sameas() {
+                    if (_VALUE !== _SAMEAS_VALUE[_RULES_PARAMETER] || _VALUE != _SAMEAS_VALUE[_RULES_PARAMETER]) {
+                        return _CUSTOM_MESSAGE || 'value tidak sama dengan ' + _RULES_PARAMETER
+                    }
+                }
     
                 function required() {
                     if (!Array.isArray(_VALUE) && _VALUE instanceof Object && !_VALUE instanceof Date) {
@@ -178,7 +183,7 @@
                     var match = _CLEAN_REGEX.match(new RegExp('^/(.*?)/([gimuy]*)$'));
                     var regex = new RegExp(match[1], match[2]);
                     regex = new RegExp(regex)
-                    if (!regex.test(_VALUE)) return 'format data tidak sesuai'
+                    if (!regex.test(_VALUE)) return _CUSTOM_MESSAGE || 'format data tidak sesuai'
                 }
     
                 /**
@@ -200,10 +205,16 @@
                                 if (_CLEAN_RULES[_CLEAN_RULES.length - 1] === '|') _CLEAN_RULES = _CLEAN_RULES.slice(0, _CLEAN_RULES.length - 1)
                                 _SPLITE_RULES = _CLEAN_RULES.split('|')
                                 _VALUE = data_object[key_iterator]
+                                _SAMEAS_VALUE[key_iterator] = _VALUE
                                 if (_VALUE instanceof Object) {
-                                    if (_VALUE.hasOwnProperty('field')) _CUSTOM_MESSAGE = _VALUE.field
-                                    else _CUSTOM_MESSAGE = key_iterator
+                                    if (_VALUE.hasOwnProperty('field')) {
+                                        _CUSTOM_MESSAGE = _VALUE.field
+                                        _SAMEAS_VALUE[key_iterator] = _VALUE
+                                    } else {
+                                        _CUSTOM_MESSAGE = key_iterator
+                                    }
                                 }
+                                // console.log("validate -> _SPLITE_RULES", _SPLITE_RULES)
                                 _ASSIGN_FUNCTION = _call_validation(_SPLITE_RULES)
                                 _CUSTOM_MESSAGE = ''
                                 if (_ASSIGN_FUNCTION) {
@@ -233,6 +244,7 @@
                         var _FUNCTION
                         if (_ARRAY_OF_RULES[0].search('-') > 0) {
                             _FUNCTION = _THIS[_ARRAY_OF_RULES[0].slice(0, _ARRAY_OF_RULES[0].search('-'))]
+                            // console.log("_call_validation -> _FUNCTION", _FUNCTION)
                             _RULES_PARAMETER = _ARRAY_OF_RULES[0].slice((_ARRAY_OF_RULES[0].search('-') + 1), _ARRAY_OF_RULES[0].length)
                         } else {
                             _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
