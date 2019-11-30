@@ -182,7 +182,6 @@
                     var _CLEAN_REGEX = _RULES_PARAMETER.slice(1, _RULES_PARAMETER.length - 1)
                     var match = _CLEAN_REGEX.match(new RegExp('^/(.*?)/([gimuy]*)$'));
                     var regex = new RegExp(match[1], match[2]);
-                    regex = new RegExp(regex)
                     if (!regex.test(_VALUE)) return _CUSTOM_MESSAGE || 'format data tidak sesuai'
                 }
     

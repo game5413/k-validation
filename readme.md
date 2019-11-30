@@ -37,7 +37,7 @@ KValidation.schema(rules).validate(value, function(result) {
 - phone
 - email
 - RegExp `// regex-(/[^0-9]/g)` **see notes for detail**
-- sameas-${id} `// sameas-id`
+- sameas-{id} `// sameas-id`
 
 ### Notes
 - for using regex rules, you must escape some special characters because rules writed as string
