@@ -1,15 +1,3 @@
-/*
-    {
-        value: value,
-        field: field,
-        rules: {
-            required: {
-                message: message
-            },
-            ...
-        }
-    }
-*/
 (function() {
     if (window.KValidation) delete window.KValidation
     var KValidation = {
@@ -71,7 +59,7 @@
                             return {status: status || 500, message: message || 'error'}
                         }
                     }
-                 */
+                    */
     
                 /**
                  * Validation Rules Function
@@ -208,9 +196,9 @@
                                 _VALUE = data_object[key_iterator]
                                 _SAMEAS_VALUE[key_iterator] = _VALUE
                                 if (_VALUE instanceof Object) {
-                                    if (_VALUE.hasOwnProperty('field')) {
+                                    if (_VALUE.field) {
                                         _CUSTOM_MESSAGE = _VALUE.field
-                                        _SAMEAS_VALUE[key_iterator] = _VALUE
+                                        //_SAMEAS_VALUE[key_iterator] = _VALUE
                                     } else {
                                         _CUSTOM_MESSAGE = key_iterator
                                     }
@@ -255,12 +243,13 @@
                          * [determine for custom message]
                          */
                         if (_VALUE instanceof Object) {
-                            if (_VALUE.hasOwnProperty('rules') && _VALUE.rules.hasOwnProperty(_ARRAY_OF_RULES[0])) {
+                            if (_VALUE.rules && _VALUE.rules[_ARRAY_OF_RULES[0]]) {
                                 var _MESSAGE = _VALUE.rules[_ARRAY_OF_RULES[0]]
                                 var _FIELD = _CUSTOM_MESSAGE.slice()
                                 _CUSTOM_MESSAGE = _MESSAGE.replace(/{{field}}/g, _FIELD)
                             } else _CUSTOM_MESSAGE = ''
                             if (!_VALUE instanceof Date) _VALUE = _VALUE.value
+                            _VALUE = _VALUE.value
                         }
                         // console.log(_ARRAY_OF_RULES)
                         _FUNCTION = _FUNCTION()

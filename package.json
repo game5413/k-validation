@@ -4,7 +4,7 @@
   "description": "Validation library inspired from joi library and laravel validator",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "test": "node ./index.js"
   },
   "keywords": [
     "validation",
@@ -12,5 +12,6 @@
     "validation library"
   ],
   "author": "febryanph10@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {}
 }

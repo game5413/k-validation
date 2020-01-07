@@ -22,10 +22,10 @@ KValidation.schema(rules).validate(value, function(result) {
 2. message **`[STRING]`**` show message according to status`
 3. data **`[OBJECT|NULL]`**` return null if there was no errors validation`
 ### pass rules object to schema function. example:
-```
+```json
 {
-   id: 'required',
-   title: 'required|min-6'
+   "id": "required",
+   "title": "required|min-6"
 }
 ```
 ##### KValidation have built-in validation rules:
@@ -45,21 +45,21 @@ for example `regex-(/\d/g)` will return `regex-(/d/g)` if you not escape the spe
 this `regex(/\\d/g)` and it will return `regex-(/\d/g)`
 
 ### Validation values can be passed with two variant
-```
+```json
 {
-   id: 'value'
+   "id": "{value}"
 }
 ```
 
 ##### or advanced using
 
-```
+```json
 {
-   id: {
-       value: 'value',
-       field: 'field name',
-       rules: {
-         required: 'custom message'
+   "id": {
+       "value": "value",
+       "field": "field name",
+       "rules": {
+         "required": "custom message"
        }
    }
 }
@@ -73,13 +73,13 @@ this `regex(/\\d/g)` and it will return `regex-(/\d/g)`
 >
 > **notes: to call field name in custom message, follow example below**
 >
-> ```
+> ```json
 > {
-> 	id: {
-> 	  value: 'value',
-> 	  field: 'User ID', // if you not passing it with default use object key as field name
-> 	  rules: {
-> 		required: "field {{field}} can't be empty!" // will return field User ID can't be empty!
+> 	"id": {
+> 	  "value": "value",
+> 	  "field": "User ID", // if you not passing it with default use object key as field name
+> 	  "rules": {
+> 		"required": "field {{field}} can't be empty!" // will return field User ID can't be empty!
 > 	  }
 > 	}
 > }
