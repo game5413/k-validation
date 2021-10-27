@@ -230,24 +230,25 @@
                 function _call_validation(_ARRAY_OF_RULES) {
                     if (!(Array.isArray(_ARRAY_OF_RULES)) && !(_ARRAY_OF_RULES instanceof Object)) throw 'should array'
                     if (_ARRAY_OF_RULES.length) {
-                        var _FUNCTION
-                        if (_ARRAY_OF_RULES[0].search('-') > 0) {
-                            _FUNCTION = _THIS[_ARRAY_OF_RULES[0].slice(0, _ARRAY_OF_RULES[0].search('-'))]
-                            // console.log("_call_validation -> _FUNCTION", _FUNCTION)
-                            _RULES_PARAMETER = _ARRAY_OF_RULES[0].slice((_ARRAY_OF_RULES[0].search('-') + 1), _ARRAY_OF_RULES[0].length)
+                        var _FUNCTION,
+                            _VALIDATION_NAME = _ARRAY_OF_RULES[0].split('-', 2)
+                        if (_VALIDATION_NAME.length > 1) {
+                            _FUNCTION = _THIS[_VALIDATION_NAME[0]]
+                            _RULES_PARAMETER = _VALIDATION_NAME[1]
                         } else {
-                            _FUNCTION = _THIS[_ARRAY_OF_RULES[0]]
+                            _FUNCTION = _THIS[_VALIDATION_NAME[0]]
                         }
                         if (!_FUNCTION) throw {status: 500, message: 'undefined function'}
                         /**
                          * [determine for custom message]
                          */
+                        _CUSTOM_MESSAGE = ''
                         if (_VALUE instanceof Object) {
-                            if (_VALUE.rules && _VALUE.rules[_ARRAY_OF_RULES[0]]) {
-                                var _MESSAGE = _VALUE.rules[_ARRAY_OF_RULES[0]]
+                            if (_VALUE.rules && _VALUE.rules[_VALIDATION_NAME[0]]) {
+                                var _MESSAGE = _VALUE.rules[_VALIDATION_NAME[0]]
                                 var _FIELD = _CUSTOM_MESSAGE.slice()
                                 _CUSTOM_MESSAGE = _MESSAGE.replace(/{{field}}/g, _FIELD)
-                            } else _CUSTOM_MESSAGE = ''
+                            }
                             if (!_VALUE instanceof Date) _VALUE = _VALUE.value
                             _VALUE = _VALUE.value
                         }
